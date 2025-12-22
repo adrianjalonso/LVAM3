@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom"
+import { useEffect } from "react"
 import Login from "./Login"
 import PaginaPrincipal from "./PaginaPrincipal"
 import Favoritos from "./Favoritos"
@@ -7,17 +8,43 @@ import Header from "./Header"
 import Footer from "./Footer"
 import { useState } from "react"
 import Sucesso from "./Sucesso"
+import { Perfume } from "./types/ComponetsInterface"
 
 export default function App () {
 
-  const [favoritos, setFavoritos] = useState<number[]>([]);
+  const [favoritos, setFavoritos] = useState<Perfume[]>([]);
   const [busca, setBusca] = useState("")
-  const [carrinho, setCarrinho] = useState<number[]>([]);
+  const [carrinho, setCarrinho] = useState<Perfume[]>([]);
   const [totalMasculino, setTotalMasculino] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalFeminino, setTotalFeminino] = useState(0);
   const [totalKids, setTotalKids] = useState(0);
-  
+
+  useEffect(() => {
+  const carrinhoStorage = localStorage.getItem("carrinho");
+
+  if (carrinhoStorage) {
+    try {
+      const carrinhoParseado: Perfume[] = JSON.parse(carrinhoStorage);
+      setCarrinho(carrinhoParseado);
+    } catch (e) {
+      console.error("Erro ao ler carrinho do localStorage", e);
+    }
+  }
+}, []);
+
+ useEffect(() => {
+  const favoritoStorage = localStorage.getItem("favoritos");
+
+  if (favoritoStorage) {
+    try {
+      const favoritoParseado: Perfume[] = JSON.parse(favoritoStorage);
+      setFavoritos(favoritoParseado);
+    } catch (e) {
+      console.error("Erro ao ler carrinho do localStorage", e);
+    }
+  }
+}, []);  
 
   return (
     <div className="h-full w-full flex justify-center flex-col ">
@@ -42,3 +69,5 @@ export default function App () {
     </div>
   )
 }
+
+

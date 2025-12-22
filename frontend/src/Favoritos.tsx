@@ -30,61 +30,68 @@ export default function Favoritos({
       : "grid md:grid-cols-[repeat(3,minmax(200px,1fr))] lg:grid-cols-[repeat(4,minmax(200px,1fr))] grid-cols-[repeat(2,minmax(150px,1fr))]";
 
   useEffect(() => {
-    getPerfumes();
+    setProducts(favoritos);
     obterTotais();
   }, [favoritos]);
-
-  async function getPerfumes() {
-    const { data } = (await supabase.from("perfumes").select()) as {
-      data: Perfume[] | null;
-    };
-    if (data) {
-      const favoritosPerfumes = data.filter((producto) =>
-        favoritos.includes(producto.id)
-      );
-      setProducts(favoritosPerfumes);
-    }
-  }
 
   async function obterTotais() {
     const { data } = (await supabase.from("perfumes").select("id,genero")) as {
       data: Perfume[] | null;
     };
     if (data) {
-      setTotal(data.filter((perfume) => favoritos.includes(perfume.id)).length);
+      setTotal(favoritos.length);
       setTotalMasculino(
         data.filter(
           (perfume) =>
-            perfume.genero === "masculino" && favoritos.includes(perfume.id)
+            perfume.genero === "masculino" &&
+            favoritos.some((item) => item.id === perfume.id)
         ).length
       );
       setTotalFeminino(
         data.filter(
           (perfume) =>
-            perfume.genero === "feminino" && favoritos.includes(perfume.id)
+            perfume.genero === "feminino" &&
+            favoritos.some((item) => item.id === perfume.id)
         ).length
       );
       setTotalKids(
         data.filter(
           (perfume) =>
-            perfume.genero === "kids" && favoritos.includes(perfume.id)
+            perfume.genero === "kids" &&
+            favoritos.some((item) => item.id === perfume.id)
         ).length
       );
     }
   }
 
-  function toggleFavoritos(id: number) {
-    setFavoritos((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
+  function toggleFavoritos(perfume: Perfume) {
+    setFavoritos((prev) =>{
+      const existe = prev.find((p)=> p.id===perfume.id)
+      let novosFavoritos;
+      if(existe){
+        novosFavoritos = prev.filter((p)=> p.id !== perfume.id)
+      } else {
+        novosFavoritos = [...prev,perfume]
+      }
+      localStorage.setItem("favoritos",JSON.stringify(novosFavoritos))
+      return novosFavoritos
+
+  });
   }
 
-  function toggleCarrinho(id: number) {
-    setCarrinho((prev) =>
-      prev.includes(id)
-        ? prev.filter((carrinhoId) => carrinhoId !== id)
-        : [...prev, id]
-    );
+  function toggleCarrinho(perfume: Perfume) {
+    setCarrinho((prev)=>{
+      const existe = prev.find((p)=>p.id=== perfume.id)
+
+      let novoCarrinho;
+      if(existe){
+        novoCarrinho=prev.filter((p)=> p.id !== perfume.id)
+      } else {
+        novoCarrinho = [...prev,perfume];
+      }
+      localStorage.setItem("carrinho",JSON.stringify(novoCarrinho))
+      return novoCarrinho
+    })
   }
 
   return (
@@ -113,9 +120,13 @@ export default function Favoritos({
           </p>
         ) : (
           products.map((perfume) => {
-            const isFavorited = favoritos.includes(perfume.id);
+            const isFavorited = favoritos.some(
+              (item) => item.id === perfume.id
+            );
             const icon = isFavorited ? "favorite" : "notFavorite";
-            const isInCarrinho = carrinho.includes(perfume.id);
+            const isInCarrinho = carrinho.some(
+              (item) => item.id === perfume.id
+            );
             const buttonText = isInCarrinho
               ? "Tirar do carrinho"
               : "Adicionar ao carrinho";
@@ -144,14 +155,14 @@ export default function Favoritos({
                       >{`R$ ${perfume.price.toFixed(2)}`}</p>
                     </div>
                     <div
-                      onClick={() => toggleFavoritos(perfume.id)}
+                      onClick={() => toggleFavoritos(perfume)}
                       className="flex justify-center items-center  p-1 bg-light size-8 rounded-md hover:bg-primary/20 cursor-pointer transition-colors duration-300 mr-1"
                     >
                       <img src={`./src/imagens/${icon}.svg`} alt="" />
                     </div>
                   </div>
                   <button
-                    onClick={() => toggleCarrinho(perfume.id)}
+                    onClick={() => toggleCarrinho(perfume)}
                     className={`w-full mt-2 text-sm font-bold text-white bg-primary rounded-lg py-2.5 hover:bg-primary/90 transition-colors `}
                     disabled={perfume.estoque === 0}
                   >

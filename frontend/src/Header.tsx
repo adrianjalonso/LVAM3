@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Header ({className, onSearchChange, isFavorited, isInCarrinho, disable}: {className: string,isFavorited: number,isInCarrinho: number, disable?: boolean, onSearchChange?: (value: string) => void}){
@@ -11,7 +12,7 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
 
   return(
   <header className={className}>
-  <Link to="/"><img  className="h-12" src="./src/imagens/logo.png" alt="logo Abdon Modas" /></Link>
+  <Link to="/" ><img  className="sm:h-12 h-6" src="./src/imagens/logo.png" alt="logo Abdon Modas" /></Link>
   <div className={`flex-1 px-8 `}>
     <label className="flex flex-col w-full !h-10">
     <div className="flex w-full flex-1 items-stretch rounded-lg h-full">

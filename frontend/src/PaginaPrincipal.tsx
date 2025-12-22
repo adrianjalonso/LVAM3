@@ -83,87 +83,111 @@ export default function PaginaPrincipal({
     setGeneroSelecionado(genero);
   }
 
-  function toggleFavoritos(id: number) {
-    setFavoritos((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
-  }
-  function toggleCarrinho(id: number) {
-    setCarrinho((prev) =>
-      prev.includes(id) ? prev.filter((productId) => productId !== id) : [...prev, id]
-    );
-  }
+  function toggleFavoritos(perfume: Perfume) {
+    setFavoritos((prev) =>{
+      const existe = prev.find((p)=> p.id===perfume.id)
+      let novosFavoritos;
+      if(existe){
+        novosFavoritos = prev.filter((p)=> p.id !== perfume.id)
+      } else {
+        novosFavoritos = [...prev,perfume]
+      }
+      localStorage.setItem("favoritos",JSON.stringify(novosFavoritos))
+      return novosFavoritos
 
+  });
+  }
+  
+  function toggleCarrinho(perfume: Perfume) {
+    setCarrinho((prev)=>{
+      const existe = prev.find((p)=>p.id=== perfume.id)
 
+      let novoCarrinho;
+      if(existe){
+        novoCarrinho=prev.filter((p)=> p.id !== perfume.id)
+      } else {
+        novoCarrinho = [...prev,perfume];
+      }
+      localStorage.setItem("carrinho",JSON.stringify(novoCarrinho))
+      return novoCarrinho
+    })
+  }
+  
   return (
     <div className="h-screen w-screen flex justify-start items-center flex-col  bg-white">
       <div className="flex flex-col items-start justify-center h-screen pt-4 pb-6  w-screen">
-        <main className=" flex-1 flex flex-row w-screen items-start overflow-y-auto bg-light">
-          <aside className="bg-light pt-14 pb-4  w-52 h-full overflow-y-auto border-dashed border-red-400 justify-center items-start p-5 rounded-lg lg:flex md:flex hidden">
-            <section className="bg-white w-full rounded-lg shadow-md h-max">
-              <h1
-                onClick={() => filtrarPorGenero("todos")}
-                className="font-semibold p-2 "
-              >{`TODOS (${total})`}</h1>
-              <p onClick={() => filtrarPorGenero("masculino")} className="p-2">
-                Masculino {" "}
-                <span className="text-xs">{`(${totalMasculino})`}</span>
-              </p>
-              <p onClick={() => filtrarPorGenero("feminino")} className="p-2">
-                Feminino <span className="text-xs">{`(${totalFeminino})`}</span>
-              </p>
-              <p onClick={() => filtrarPorGenero("kids")} className="p-2">
-                Kids<span className="text-xs">{`(${totalKids})`}</span>
-              </p>
-            </section>
-          </aside>
-          <section className="grid md:grid-cols-[repeat(3,minmax(200px,1fr))] lg:grid-cols-[repeat(4,minmax(200px,1fr))] grid-cols-[repeat(2,minmax(150px,1fr))] gap-6 p-4 w-full md:w-5/6 lg:w-4/5 pt-14 pb-4 ">
-            {perfumesFiltrados.map((perfume) => {
-              const quantidade = 1;
-              const isFavorited = favoritos.includes(perfume.id);
-              const isInCarrinho = carrinho.includes(perfume.id)
-              const textoCarrinho = isInCarrinho ? "Tirar do carrinho" : "Adicionar ao Carrinho"
-              const clase = isFavorited ? "favorite" : "notfavorite";
-             const textoEsgotado = perfume.estoque === 0 ? "(esgotado)" : ""
-             const botaoDesativado = perfume.estoque === 0 ? "opacity-50 cursor-not-allowed" : ""        
-             const esgotado = perfume.estoque === 0 ? "opacity-20" : ""     
-              return (
-                <figure
-                  className={`flex flex-col gap-3 pb-3 rounded-lg overflow-hidden shadow-md bg-white transform hover:-translate-y-2 transition-transform duration-300 pt-2  `}
-                  key={perfume.id}
-                >
-                  <div className={`w-full bg-center bg-no-repeat bg-cover relative ${esgotado}`}>
-                    <img
-                      className=" w-full h-full object-cover"
-                      src={`./public/imagens/${perfume.name_perfume}.png`}
-                      alt="foto"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h1 className={`text-lg font-bold leading-normal ${esgotado}`}>
-                          {perfume.name_perfume + textoEsgotado}
-                        </h1>
-                        <p className={`text-base font-medium text-primary  ${esgotado}`}>{`R$ ${perfume.price.toFixed(
-                          2
-                        )}`}</p>
-                      </div>
-                      <div
-                        onClick={() => toggleFavoritos(perfume.id)}
-                        className="flex justify-center items-center  p-1 bg-light size-8 rounded-md hover:bg-primary/20 cursor-pointer transition-colors duration-300 mr-1"
-                      >
-                        <img src={`./src/imagens/${clase}.svg`} alt="" />
-                      </div>
+        <main className=" flex-1 flex flex-col border border-red-600 w-screen items-start pt-16 overflow-y-auto bg-light">
+          <div className="flex justify-center items-center w-full h-20">
+            <h1 className="font-bold text-2xl">Os perfumes que você ama,os preços que você procura</h1>
+          </div>
+          <div className="flex ">
+            <aside className="bg-light pb-4  w-52 h-full overflow-y-auto border-dashed border-red-400 justify-center items-start p-5 rounded-lg lg:flex md:flex hidden">
+              <section className="bg-white w-full rounded-lg shadow-md h-max">
+                <h1
+                  onClick={() => filtrarPorGenero("todos")}
+                  className="font-semibold p-2 "
+                >{`TODOS (${total})`}</h1>
+                <p onClick={() => filtrarPorGenero("masculino")} className="p-2">
+                  Masculino {" "}
+                  <span className="text-xs">{`(${totalMasculino})`}</span>
+                </p>
+                <p onClick={() => filtrarPorGenero("feminino")} className="p-2">
+                  Feminino <span className="text-xs">{`(${totalFeminino})`}</span>
+                </p>
+                <p onClick={() => filtrarPorGenero("kids")} className="p-2">
+                  Kids<span className="text-xs">{`(${totalKids})`}</span>
+                </p>
+              </section>
+            </aside>
+            <section className="grid md:grid-cols-[repeat(3,minmax(200px,1fr))] lg:grid-cols-[repeat(4,minmax(200px,1fr))] grid-cols-[repeat(2,minmax(150px,1fr))] gap-6 p-4 w-full md:w-5/6 lg:w-4/5  pb-4 ">
+              {perfumesFiltrados.map((perfume) => {
+                const quantidade = 1;
+                const isFavorited = favoritos.some((item)=> item.id === perfume.id);
+                const isInCarrinho = carrinho.some((item) => item.id === perfume.id);
+                const estaNoCarrinho = carrinho.some((item)=> item.id === perfume.id)
+                const textoCarrinho = estaNoCarrinho ? "Tirar do carrinho" : "Adicionar ao Carrinho"
+                const clase = isFavorited ? "favorite" : "notfavorite";
+               const textoEsgotado = perfume.estoque === 0 ? "(esgotado)" : ""
+               const botaoDesativado = perfume.estoque === 0 ? "opacity-50 cursor-not-allowed" : ""
+               const esgotado = perfume.estoque === 0 ? "opacity-20" : ""  ;
+                return (
+                  <figure
+                    className={`flex flex-col gap-3 pb-3 rounded-lg overflow-hidden shadow-md bg-white pt-2  `}
+                    key={perfume.id}
+                  >
+                    <div className={`w-full bg-center bg-no-repeat bg-cover relative ${esgotado}`}>
+                      <img
+                        className=" w-full h-full object-cover"
+                        src={`./public/imagens/${perfume.name_perfume}.png`}
+                        alt="foto"
+                      />
                     </div>
-                    <button onClick={() => toggleCarrinho(perfume.id)} className={`w-full mt-2 text-sm font-bold text-white bg-primary rounded-lg py-2.5 hover:bg-primary/90 transition-colors ${botaoDesativado}`} disabled={perfume.estoque === 0}>
-                      {textoCarrinho}
-                    </button>
-                  </div>
-                </figure>
-              );
-            })}
-          </section>
+                    <div className="p-3">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h1 className={`text-lg font-bold leading-normal ${esgotado}`}>
+                            {perfume.name_perfume + textoEsgotado}
+                          </h1>
+                          <p className={`text-base font-medium text-primary  ${esgotado}`}>{`R$ ${perfume.price.toFixed(
+                            2
+                          )}`}</p>
+                        </div>
+                        <div
+                          onClick={() => toggleFavoritos(perfume)}
+                          className="flex justify-center items-center  p-1 bg-light size-8 rounded-md hover:bg-primary/20 cursor-pointer transition-colors duration-300 mr-1"
+                        >
+                          <img src={`./src/imagens/${clase}.svg`} alt="" />
+                        </div>
+                      </div>
+                      <button onClick={() => toggleCarrinho(perfume)} className={`w-full mt-2 text-sm font-bold text-white bg-primary rounded-lg py-2.5 hover:bg-primary/90 transition-colors ${botaoDesativado}`} disabled={perfume.estoque === 0}>
+                        {textoCarrinho}
+                      </button>
+                    </div>
+                  </figure>
+                );
+              })}
+            </section>
+          </div>
         </main>
       </div>
     </div>

@@ -4,12 +4,14 @@ import cors from "cors";
 import dotenv from "dotenv"
 
 dotenv.config();
-
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 const app = express()
+app.use("/webhook",express.raw({type: "application/json"}))
 app.use(express.json())
 app.use(cors());
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
+
 
 app.post("/create-payment-intent", async (req, res) => {
   try {
@@ -32,6 +34,27 @@ app.post("/create-payment-intent", async (req, res) => {
     console.log("Erro Stripe:", error)
     res.status(500).json({error: error.message});
   }
+})
+
+app.post("/webhook", (req,res)=>{
+  const sig = req.headers["stripe-signature"];
+
+  let event ;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    )
+  } catch (err) {
+    return res.status(400).send("webhook error")
+  }
+
+  if (event.type=== "payment_intent.succeeded"){
+     console.log("Pagamento confirmado!");
+  }
+ 
+  res.json({received: true})
 })
 
 app.listen(3000, () => {
