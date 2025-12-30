@@ -33,7 +33,6 @@ export default function PaginaPrincipal({
   const [perfumesFiltrados, setPerfumesFiltrados] = useState<Perfume[]>([]);
   const [generoSelecionado, setGeneroSelecionado] = useState<string>("todos");
 
-
   useEffect(() => {
     getPerfumes();
     obterTotais();
@@ -114,11 +113,11 @@ export default function PaginaPrincipal({
   }
   
   return (
-    <div className="h-screen w-screen flex justify-start items-center flex-col  bg-white">
+    <div className="h-dvh w-screen  flex justify-start items-center flex-col  bg-white">
       <div className="flex flex-col items-start justify-center h-screen pt-4 pb-6  w-screen">
-        <main className=" flex-1 flex flex-col border border-red-600 w-screen items-start pt-16 overflow-y-auto bg-light">
-          <div className="flex justify-center items-center w-full h-20">
-            <h1 className="font-bold text-2xl">Os perfumes que você ama,os preços que você procura</h1>
+        <main className="flex-1 flex flex-col  w-full items-start pt-16 overflow-y-scroll bg-light">
+          <div className="flex justify-center items-center w-full px-4">
+            <h1 className="font-bold text-xl sm:text-2xl text-center">Os perfumes que você ama, os preços que você procura</h1>
           </div>
           <div className="flex ">
             <aside className="bg-light pb-4  w-52 h-full overflow-y-auto border-dashed border-red-400 justify-center items-start p-5 rounded-lg lg:flex md:flex hidden">
@@ -139,7 +138,7 @@ export default function PaginaPrincipal({
                 </p>
               </section>
             </aside>
-            <section className="grid md:grid-cols-[repeat(3,minmax(200px,1fr))] lg:grid-cols-[repeat(4,minmax(200px,1fr))] grid-cols-[repeat(2,minmax(150px,1fr))] gap-6 p-4 w-full md:w-5/6 lg:w-4/5  pb-4 ">
+            <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 w-full max-w-7xl mx-auto  pb-4 ">
               {perfumesFiltrados.map((perfume) => {
                 const quantidade = 1;
                 const isFavorited = favoritos.some((item)=> item.id === perfume.id);
@@ -162,7 +161,7 @@ export default function PaginaPrincipal({
                         alt="foto"
                       />
                     </div>
-                    <div className="p-3">
+                    <div className="p-3 flex flex-col ">
                       <div className="flex justify-between items-center">
                         <div>
                           <h1 className={`text-lg font-bold leading-normal ${esgotado}`}>
@@ -179,9 +178,11 @@ export default function PaginaPrincipal({
                           <img src={`./src/imagens/${clase}.svg`} alt="" />
                         </div>
                       </div>
-                      <button onClick={() => toggleCarrinho(perfume)} className={`w-full mt-2 text-sm font-bold text-white bg-primary rounded-lg py-2.5 hover:bg-primary/90 transition-colors ${botaoDesativado}`} disabled={perfume.estoque === 0}>
-                        {textoCarrinho}
-                      </button>
+                      <div className="flex justify-center">
+                        <button onClick={() => toggleCarrinho(perfume)} className={`w-64 mt-2 text-sm  font-bold text-white bg-primary rounded-lg py-2 hover:bg-primary/90 transition-colors ${botaoDesativado}`} disabled={perfume.estoque === 0}>
+                          <p className="text-xs sm:text-base">{textoCarrinho}</p>
+                        </button>
+                      </div>
                     </div>
                   </figure>
                 );

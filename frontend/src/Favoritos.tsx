@@ -115,8 +115,8 @@ export default function Favoritos({
         className={`${centralizar} gap-4 w-full  md:w-5/6 lg:w-full pb-4 mx-4`}
       >
         {products.length === 0 ? (
-          <p className="w-full flex justify-center items-center">
-            Não foram adicionados productos aos favoritos.
+          <p className="w-full text-center flex justify-center h-screen items-center">
+            Não foram adicionados produtos aos favoritos.
           </p>
         ) : (
           products.map((perfume) => {

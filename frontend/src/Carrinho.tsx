@@ -167,8 +167,8 @@ export default function Carrinho({
           className={`${centralizar}  gap-4 w-full md:w-5/6 lg:w-full pb-4 mx-4`}
         >
           {products.length === 0 ? (
-            <p className="w-full flex justify-center items-center">
-              Não existem productos no carrinho ainda.
+            <p className="w-full flex justify-center h-screen items-center">
+              Não existem produtos no carrinho ainda.
             </p>
           ) : (
             products.map((perfume) => {

@@ -52,7 +52,7 @@ export default function App () {
       onSearchChange={setBusca}
       isInCarrinho={carrinho.length}
       className={
-          "w-full left-0 top-0 fixed h-14 bg-white border-b flex justify-between items-center px-4 md:px-10 py-4 z-10"
+          "fixed top-0 left-0 w-full h-14 min-h-14 bg-white border-b flex gap-1 items-center px-4 md:px-10 z-10"
         } />
     <Routes>
       <Route path="/" element={<PaginaPrincipal busca={busca} setBusca={setBusca} favoritos={favoritos}
@@ -63,9 +63,6 @@ export default function App () {
       <Route path="/Carrinho" element={<Carrinho  favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
       <Route path="/Sucesso" element={<Sucesso />} />
     </Routes>
-    <Footer className={
-          "w-full justify-center flex left-0 bottom-0 fixed h-6 bg-primary"
-        } />
     </div>
   )
 }
