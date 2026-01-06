@@ -15,6 +15,8 @@ const supabase = createClient(
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 export default function Carrinho({
+  isLogin,
+  setIsLogin,
   favoritos,
   setFavoritos,
   carrinho,
@@ -175,9 +177,6 @@ export default function Carrinho({
               const isFavorited = favoritos.some((item)=> item.id===perfume.id);
               const icon = isFavorited ? "favorite" : "notFavorite";
               const isInCarrinho = carrinho.length;
-              const buttonText = isInCarrinho
-                ? "Remover"
-                : "Adicionar ao carrinho";
               return (
                 <figure
                   className={`col-span-4 row-span-1 flex flex-col justify-between items-center gap-3 pb-3 rounded-lg overflow-hidden shadow-md bg-white p-6 pt-2 sm:flex-row `}

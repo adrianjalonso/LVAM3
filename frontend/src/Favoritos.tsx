@@ -132,7 +132,7 @@ export default function Favoritos({
               : "Adicionar ao carrinho";
             return (
               <figure
-                className={`flex flex-col gap-3 pb-3 rounded-lg overflow-hidden shadow-md bg-white transform hover:-translate-y-2 transition-transform duration-300 pt-2 `}
+                className={`flex flex-col gap-3 pb-3 rounded-lg overflow-hidden shadow-md bg-white  pt-2 `}
                 key={perfume.id}
               >
                 <div

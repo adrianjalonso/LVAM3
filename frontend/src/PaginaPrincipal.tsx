@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import type { Perfume } from "./types/ComponetsInterface";
 import type { Pages } from "./types/ComponetsInterface";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 const supabase = createClient(
@@ -12,6 +13,10 @@ const supabase = createClient(
 
 
 export default function PaginaPrincipal({
+  menu,
+  setMenu,
+  isLogin,
+  setIsLogin,
   busca,
   setBusca,
   favoritos,
@@ -32,6 +37,7 @@ export default function PaginaPrincipal({
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
   const [perfumesFiltrados, setPerfumesFiltrados] = useState<Perfume[]>([]);
   const [generoSelecionado, setGeneroSelecionado] = useState<string>("todos");
+  const navigate = useNavigate()
 
   useEffect(() => {
     getPerfumes();
@@ -98,7 +104,7 @@ export default function PaginaPrincipal({
   }
   
   function toggleCarrinho(perfume: Perfume) {
-    setCarrinho((prev)=>{
+    if(isLogin) {setCarrinho((prev)=>{
       const existe = prev.find((p)=>p.id=== perfume.id)
 
       let novoCarrinho;
@@ -109,11 +115,13 @@ export default function PaginaPrincipal({
       }
       localStorage.setItem("carrinho",JSON.stringify(novoCarrinho))
       return novoCarrinho
-    })
+    })} else {
+      navigate('/login', { state: { message: "Para adicionar ao carrinho, você precisa fazer login." } });
+    }
   }
   
   return (
-    <div className="h-dvh w-screen  flex justify-start items-center flex-col  bg-white">
+    <div onPointerDown={()=> setMenu(false)} className="h-dvh w-screen  flex justify-start items-center flex-col  bg-white">
       <div className="flex flex-col items-start justify-center h-screen pt-4 pb-6  w-screen">
         <main className="flex-1 flex flex-col  w-full items-start pt-16 overflow-y-scroll bg-light">
           <div className="flex justify-center items-center w-full px-4">

@@ -14,6 +14,8 @@
 }
 
  export interface Carrinho {
+  isLogin: boolean;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   carrinho: Perfume[]
   setCarrinho: React.Dispatch<React.SetStateAction<Perfume[]>>;
   favoritos: Perfume[];
@@ -29,6 +31,10 @@
 }
 
  export interface Pages {
+  menu: boolean,
+  setMenu:React.Dispatch<React.SetStateAction<boolean>>,
+  isLogin: boolean;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   carrinho: Perfume[];
   setCarrinho: React.Dispatch<React.SetStateAction<Perfume[]>>
   favoritos: Perfume[];

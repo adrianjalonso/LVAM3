@@ -1,9 +1,9 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Header ({className, onSearchChange, isFavorited, isInCarrinho, disable}: {className: string,isFavorited: number,isInCarrinho: number, disable?: boolean, onSearchChange?: (value: string) => void}){
+export default function Header ({className, onSearchChange, isFavorited, isInCarrinho, disable, isLogin,setIsLogin,menu, setMenu}: {className: string,isFavorited: number,isInCarrinho: number, disable?: boolean, onSearchChange?: (value: string) => void, isLogin: boolean,setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,menu: boolean,setMenu: React.Dispatch<React.SetStateAction<boolean>>}){
 
-  const [menu, setMenu] = useState(false)
   
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,14 +38,16 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
       <Link to="/Favoritos" className={`${divIconClass} sm:flex hidden w-10 justify-center  ${desactivar} relative`}>
         {isFavorited > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isFavorited}</p></span>)}
         <i className="text-2xl material-symbols-outlined">favorite</i></Link>
+        {isLogin && <button onClick={()=> setIsLogin(false)} className={`${divIconClass} sm:flex hidden w-10 justify-center  ${desactivar} relative`}><i className="text-2xl material-symbols-outlined ">logout</i></button>}
     </div>
     {menu && (
-      <nav onClick={()=>setMenu(!menu)} className="absolute top-full left-0 bg-white w-full">
+      <nav onClick={()=>setMenu(!menu)} className="absolute top-full left-0 bg-white w-full shadow-md">
         <ul>
            <li><Link to="/" className={`${divIconClass} w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">home</i>Início</Link></li>
-          <li><Link to="/login" className={`${divIconClass} w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">person</i>Minha conta</Link></li>
+          <li><Link to={isLogin ? "/Conta": "/Login"} className={`${divIconClass} w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">person</i>Minha conta</Link></li>
           <li><Link to="/Carrinho" className={`${divIconClass} w-full flex gap-3 justify-start relative`}>{ isInCarrinho > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isInCarrinho}</p></span>)}<i className="text-2xl material-symbols-outlined ">shopping_cart</i>Carrinho</Link></li>
           <li><Link to="/Favoritos" className={`${divIconClass} relative w-full flex gap-3 justify-start`}>{isFavorited > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isFavorited}</p></span>)}<i className="text-2xl material-symbols-outlined ">favorite</i>Favoritos</Link></li>
+          {isLogin && <button onClick={()=> setIsLogin(false)} className={`${divIconClass} relative w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">logout</i>Sair</button>}
         </ul>
       </nav>
     )}

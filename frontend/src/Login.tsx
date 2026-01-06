@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
+import { useLocation } from "react-router-dom";
+import { log } from "console";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
-
-
 
 function FormLogin(){
   return(
@@ -109,22 +109,44 @@ function FormLogin(){
           </div>)
 }
 
-function FormCadastro(){
+function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.Dispatch<React.SetStateAction<boolean>>}){
 
   const [nome, setNome] = useState<string>("")
   const [email, setEmail] = useState<string>("")
   const [senha, setSenha] = useState<string>("")
+  const [confirmarSenha, setConfirmarSenha] = useState("")
+  const [errorSenha, setErrorSenha] = useState<string|null>(null)
+  const [checkboxAcordo, setCheckboxAcordo] = useState("")
 
   async function cadastrar() {
+    if(checkboxAcordo==="si"){
+    if(senha!==confirmarSenha){
+      setErrorSenha("As senhas não coincidem")
+      return
+    }
+    setErrorSenha(null);
+
       const {data,error} = await supabase.from("usuarios").insert([{name: nome,email: email,senha_hash:senha}])
      if(error){
-      alert("error")
+      setErrorSenha("Erro ao cadastrar usuário")
       console.log(error)
      } else {
       alert(`Cadastrado com sucesso! ${nome}`)
-      console.log(data)
+      setIsLogin(true)
+     }} else {
+      alert("Error")
      }
   }
+
+  useEffect(()=>{
+    if (confirmarSenha.length===0){
+      setErrorSenha(null)
+    } else if (senha!==confirmarSenha){
+      setErrorSenha("As senhas não coincidem")
+    } else {
+      setErrorSenha(null)
+    }
+  },[senha, confirmarSenha])
 
  
 
@@ -151,12 +173,17 @@ function FormCadastro(){
      <div>
        <label className="flex flex-col">
         <p className="text-base font-medium leading-normal pb-2">Confirmar senha:</p>
-        <input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" type="password"/>
+        <input onChange={(e)=> setConfirmarSenha(e.target.value)} className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal ${errorSenha ? "border-red-500": "border-gray-300"}`} type="password"/>
+        {errorSenha && (
+      <span className="text-red-500 text-sm mt-1">
+        {errorSenha}
+      </span>
+    )}
         </label>
      </div>
      <label className="flex flex-row-reverse justify-end gap-2">
       <p>Li e concordo com os termos</p>
-      <input className="accent-primary rounded  focus:outline-none focus:ring-offset-0" type="checkbox" name="" id="" />
+      <input onChange={(e)=>setCheckboxAcordo(e.target.value)} className="accent-primary rounded  focus:outline-none focus:ring-offset-0" type="checkbox" value="si" />
       </label>
       <input onClick={cadastrar} type="submit" className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal hover:bg-amber-800 transition-colors" value="Cadastrar" />
     </div>
@@ -165,29 +192,34 @@ function FormCadastro(){
 
 
 
-function Login() {
+function Login({isLogin,setIsLogin}:{isLogin: boolean,setIsLogin:React.Dispatch<React.SetStateAction<boolean>>}) {
+  const location = useLocation();
+  const mensagemAlert = location.state?.message;
+  const [abaLogin, setAbaLogin] = useState(true)
 
-  const [isLogin,setIsLogin] = useState(true)
 
   return (
     <> 
-      <main className="flex justify-center items-center max-h-full bg-light pt-16 pb-6">
+      <main className="flex flex-col justify-center items-center max-h-full bg-light pt-16 pb-6">
+        { mensagemAlert && <div className="bg-amber-100 border border-amber-400 text-amber-700 px-4 py-3 rounded relative mb-4 text-center text-sm  font-medium animate-pulse">
+            {mensagemAlert}
+          </div>}
         <section className=" flex flex-col rounded-xl shadow-lg pt-4 p-8 w-full  max-w-md bg-white gap-4 mb-4">
           <div className="flex justify-evenly mb-6 transition-colors ">
             <div className="flex justify-center items-center flex-col w-full">
-              <p onClick={()=> setIsLogin(true)} className={` transition-all duration-300 ease-in-out pt-2 pb-2 w-32 py-3 ${isLogin ? "text-primary": "text-[#888888]"} text-lg font-bold text-center`}>
+              <p onClick={()=> setAbaLogin(true)} className={` transition-all duration-300 ease-in-out pt-2 pb-2 w-32 py-3 ${abaLogin ? "text-primary": "text-[#888888]"} text-lg font-bold text-center`}>
                 Entrar
               </p>
-              <hr className={` border-primary w-full transition-all duration-300  ${isLogin ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}`} />
+              <hr className={` border-primary w-full transition-all duration-300  ${abaLogin ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}`} />
             </div>
             <div className="flex justify-center  items-center flex-col w-full">
-              <p onClick={()=> setIsLogin(false)} className={`pt-2 pb-2 w-32 py-3 ${isLogin ? "text-[#888888]": "text-primary"} text-lg font-bold text-center`}>
+              <p onClick={()=> setAbaLogin(false)} className={`pt-2 pb-2 w-32 py-3 ${abaLogin ? "text-[#888888]": "text-primary"} text-lg font-bold text-center`}>
                 Cadastrar-se
               </p>
-              <hr className={` border-primary w-full ${!isLogin ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}`} />
+              <hr className={` border-primary w-full ${!abaLogin ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}`} />
             </div>
           </div>
-          {isLogin ? <FormLogin />: <FormCadastro />}
+          {abaLogin ? <FormLogin />: <FormCadastro isLogin={isLogin} setIsLogin={setIsLogin} />}
         </section>
       </main>
     </>
