@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { useLocation } from "react-router-dom";
 import * as React from "react";
@@ -12,8 +12,10 @@ const supabase = createClient(
 
 function FormLogin({setIsLogin,email,setEmail,senha,setSenha}:{setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,email: string,setEmail: React.Dispatch<React.SetStateAction<string>>,senha: string,setSenha: React.Dispatch<React.SetStateAction<string>>}){
 
+
+
 function cadastrar(){
-fetch("http://localhost:3000/login",{
+fetch(`${import.meta.env.VITE_API_URL}/user/login`,{
   method: "POST",
   headers: {
     "Content-Type": "application/json" 
@@ -141,6 +143,7 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
   const [confirmarSenha, setConfirmarSenha] = useState("")
   const [errorSenha, setErrorSenha] = useState<string|null>(null)
   const [checkboxAcordo, setCheckboxAcordo] = useState(false)
+  const navigate= useNavigate();
 
   async function cadastrar() {
     if(!checkboxAcordo){
@@ -155,7 +158,7 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
 
       
     
-     fetch("http://localhost:3000/cadastro",{
+     fetch("http://localhost:3000/user/cadastro",{
       method: "POST",
       headers:{
         "Content-Type": "application/json"
@@ -166,9 +169,18 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
         senha: senhaCadastro
       }) 
      })
-     .then(res => res.json())
-     .then(data => {
+     .then(res => {
+      if (!res.ok){
+         throw new Error("Erro no cadastro");
+      }
+        return res.json();
+    }
+  ).then(data => {
       console.log("Respuesta ", data)
+      if(data){
+        navigate("/PaginaPrincipal")
+        setIsLogin(true)
+      }
      }).catch(err =>{
       console.error("Error", err)
      })

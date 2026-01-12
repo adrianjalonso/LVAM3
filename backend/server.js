@@ -62,7 +62,7 @@ app.post("/webhook", (req,res)=>{
   res.json({received: true})
 })
 
-app.post("/cadastro", async (req,res)=>{
+app.post("/user/cadastro", async (req,res)=>{
   const {name,email,senha} = req.body
    if(!email||!senha||!name){
     return res.status(400).json({
@@ -76,8 +76,32 @@ app.post("/cadastro", async (req,res)=>{
    }
    console.log("Email Recebido!", email)
    res.status(200).json({
-    message: "Email e senha recebidos corretamente"
+    message: "Success!"
    })
+})
+
+app.post("/user/login", async(req,res)=> {
+  const {email,senha} = req.body
+  if(!email||!senha){
+    return res.status(400).json({
+      error: "Dados obrigatorios"
+    })
+  }
+  const {data,error} = await supabase.from("usuarios").select().eq("email",email).single()
+  if(error||!data){ return res.status(400).json({
+    error:  "Email ou senha errados!"
+  })}
+
+  const senhaCorreta =  await bcrypt.compare(senha,data.senha_hash) 
+  if (!senhaCorreta){
+    return res.status(400).json({
+      error: "Email ou senha errados!"
+    })
+  }
+  res.status(200).json({
+    message: "Login realizado com sucesso"
+  })
+  
 })
 
 app.listen(3000, () => {
