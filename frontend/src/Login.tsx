@@ -2,14 +2,36 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { useLocation } from "react-router-dom";
-import { log } from "console";
+import * as React from "react";
+
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
-function FormLogin(){
+function FormLogin({setIsLogin,email,setEmail,senha,setSenha}:{setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,email: string,setEmail: React.Dispatch<React.SetStateAction<string>>,senha: string,setSenha: React.Dispatch<React.SetStateAction<string>>}){
+
+function cadastrar(){
+fetch("http://localhost:3000/login",{
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json" 
+  },
+  body:JSON.stringify({
+    email: email,
+    senha: senha
+  })
+})
+.then(res=> res.json())
+.then(data => {
+  console.log("Respuesta ", data)
+})
+.catch(err=>{
+  console.error("Error:",err)
+})
+} 
+
   return(
   <div>
             <div className="flex flex-col gap-3 ">
@@ -26,6 +48,7 @@ function FormLogin(){
                   E-mail
                 </p>
                 <input
+                  onChange={(e)=>setEmail(e.target.value)}
                   className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal"
                   placeholder="Digite seu e-mail ou nome de usuário"
                   type="text"
@@ -37,6 +60,7 @@ function FormLogin(){
                 <p className="text-base font-medium leading-normal pb-2">Senha</p>
                 <div className="flex flex-col ">
                   <input
+                  onChange={(e)=>setSenha(e.target.value)}
                     className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal pr-2"
                     placeholder="Digite sua senha"
                     type="password"
@@ -62,12 +86,12 @@ function FormLogin(){
                 Esqueceu a senha?
               </a>
             </div>
-            <Link
-              to="/PaginaPrincipal"
+            <button
+              onClick={cadastrar}
               className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal hover:bg-amber-800 transition-colors"
             >
               Entrar
-            </Link>
+            </button>
             
             <div className="flex items-center my-4">
               <hr className="flex-grow border-t border-gray-300 " />
@@ -111,63 +135,74 @@ function FormLogin(){
 
 function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.Dispatch<React.SetStateAction<boolean>>}){
 
-  const [nome, setNome] = useState<string>("")
-  const [email, setEmail] = useState<string>("")
-  const [senha, setSenha] = useState<string>("")
+  const [nomeCadastro, setNomeCadastro] = useState<string>("")
+  const [emailCadastro, setEmailCadastro] = useState<string>("")
+  const [senhaCadastro, setSenhaCadastro] = useState<string>("")
   const [confirmarSenha, setConfirmarSenha] = useState("")
   const [errorSenha, setErrorSenha] = useState<string|null>(null)
-  const [checkboxAcordo, setCheckboxAcordo] = useState("")
+  const [checkboxAcordo, setCheckboxAcordo] = useState(false)
 
   async function cadastrar() {
-    if(checkboxAcordo==="si"){
-    if(senha!==confirmarSenha){
+    if(!checkboxAcordo){
+      alert("Aceitar termos!")
+      return}
+
+    if(senhaCadastro!==confirmarSenha){
       setErrorSenha("As senhas não coincidem")
       return
     }
     setErrorSenha(null);
 
-      const {data,error} = await supabase.from("usuarios").insert([{name: nome,email: email,senha_hash:senha}])
-     if(error){
-      setErrorSenha("Erro ao cadastrar usuário")
-      console.log(error)
-     } else {
-      alert(`Cadastrado com sucesso! ${nome}`)
-      setIsLogin(true)
-     }} else {
-      alert("Error")
-     }
-  }
+      
+    
+     fetch("http://localhost:3000/cadastro",{
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({
+        name: nomeCadastro,
+        email: emailCadastro,
+        senha: senhaCadastro
+      }) 
+     })
+     .then(res => res.json())
+     .then(data => {
+      console.log("Respuesta ", data)
+     }).catch(err =>{
+      console.error("Error", err)
+     })
+    } 
+  
 
   useEffect(()=>{
     if (confirmarSenha.length===0){
       setErrorSenha(null)
-    } else if (senha!==confirmarSenha){
+    } else if (senhaCadastro!==confirmarSenha){
       setErrorSenha("As senhas não coincidem")
     } else {
       setErrorSenha(null)
     }
-  },[senha, confirmarSenha])
-
- 
+  },[senhaCadastro, confirmarSenha])
 
   return(
     <div className="flex gap-2 flex-col">
      <div >
        <label className="flex flex-col">
         <p className="text-base font-medium leading-normal pb-2">Nome:</p>
-       <input onChange={(e)=> setNome(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" type="text"/>
+       <input onChange={(e)=> setNomeCadastro(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" type="text"/>
        </label>
      </div>
      <div >
        <label className="flex flex-col">
         <p className="text-base font-medium leading-normal pb-2">E-mail:</p>
-        <input onChange={(e)=> setEmail(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" autoComplete="email" type="email"/>
+        <input onChange={(e)=> setEmailCadastro(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" autoComplete="email" type="email"/>
         </label>
      </div>
      <div>
        <label className="flex flex-col">
         <p className="text-base font-medium leading-normal pb-2">Senha:</p>
-        <input onChange={(e)=> setSenha(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" type="password"/>
+        <input onChange={(e)=> setSenhaCadastro(e.target.value)} className="flex w-full min-w-0 flex-1 resize-none overflow-hidden border rounded-lg focus:outline-0 focus:border-primary h-14 p-3 text-base font-normal leading-normal" type="password"/>
         </label>
      </div>
      <div>
@@ -183,7 +218,7 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
      </div>
      <label className="flex flex-row-reverse justify-end gap-2">
       <p>Li e concordo com os termos</p>
-      <input onChange={(e)=>setCheckboxAcordo(e.target.value)} className="accent-primary rounded  focus:outline-none focus:ring-offset-0" type="checkbox" value="si" />
+      <input onChange={(e)=>setCheckboxAcordo(e.target.checked)} className="accent-primary rounded  focus:outline-none focus:ring-offset-0" type="checkbox" value="si" />
       </label>
       <input onClick={cadastrar} type="submit" className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal hover:bg-amber-800 transition-colors" value="Cadastrar" />
     </div>
@@ -192,7 +227,7 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
 
 
 
-function Login({isLogin,setIsLogin}:{isLogin: boolean,setIsLogin:React.Dispatch<React.SetStateAction<boolean>>}) {
+function Login({isLogin,setIsLogin,email,setEmail,senha,setSenha}:{isLogin: boolean,setIsLogin:React.Dispatch<React.SetStateAction<boolean>>,email: string,setEmail: React.Dispatch<React.SetStateAction<string>>,senha: string, setSenha: React.Dispatch<React.SetStateAction<string>>}) {
   const location = useLocation();
   const mensagemAlert = location.state?.message;
   const [abaLogin, setAbaLogin] = useState(true)
@@ -219,7 +254,7 @@ function Login({isLogin,setIsLogin}:{isLogin: boolean,setIsLogin:React.Dispatch<
               <hr className={` border-primary w-full ${!abaLogin ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"}`} />
             </div>
           </div>
-          {abaLogin ? <FormLogin />: <FormCadastro isLogin={isLogin} setIsLogin={setIsLogin} />}
+          {abaLogin ? <FormLogin senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} setIsLogin={setIsLogin} />: <FormCadastro isLogin={isLogin} setIsLogin={setIsLogin} />}
         </section>
       </main>
     </>

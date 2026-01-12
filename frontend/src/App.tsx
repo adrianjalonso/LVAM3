@@ -19,8 +19,10 @@ export default function App () {
   const [total, setTotal] = useState(0);
   const [totalFeminino, setTotalFeminino] = useState(0);
   const [totalKids, setTotalKids] = useState(0);
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(false)
   const [menu,setMenu] = useState(false)
+  const [email, setEmail] = useState("")
+  const [senha, setSenha] = useState("")
 
   useEffect(() => {
   const carrinhoStorage = localStorage.getItem("carrinho");
@@ -63,7 +65,7 @@ export default function App () {
     <Routes>
       <Route path="/" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos}
       carrinho={carrinho} setCarrinho={setCarrinho} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
-      <Route path="/Login" element={<Login isLogin={isLogin} setIsLogin={setIsLogin} />} />
+      <Route path="/Login" element={<Login senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} isLogin={isLogin} setIsLogin={setIsLogin} />} />
       <Route path="/PaginaPrincipal" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
       <Route path="/Favoritos" element={<Favoritos  favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} />} />
       <Route path="/Carrinho" element={<Carrinho isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />

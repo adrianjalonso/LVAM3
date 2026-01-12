@@ -2,9 +2,14 @@ import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
 import dotenv from "dotenv"
+import bcrypt from "bcrypt"
+import { createClient } from "@supabase/supabase-js";
+
+
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const supabase = createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY)
 const app = express()
 app.use("/webhook",express.raw({type: "application/json"}))
 app.use(express.json())
@@ -55,6 +60,24 @@ app.post("/webhook", (req,res)=>{
   }
  
   res.json({received: true})
+})
+
+app.post("/cadastro", async (req,res)=>{
+  const {name,email,senha} = req.body
+   if(!email||!senha||!name){
+    return res.status(400).json({
+      error: "Dados obrigatorios"
+    })
+   }
+   const senhaHash = await bcrypt.hash(senha,10)
+   const {error} = await supabase.from("usuarios").insert([{name,email,senha_hash: senhaHash}])
+   if (error){
+    return res.status(500).json({error: "Erro ao cadastrar"});
+   }
+   console.log("Email Recebido!", email)
+   res.status(200).json({
+    message: "Email e senha recebidos corretamente"
+   })
 })
 
 app.listen(3000, () => {

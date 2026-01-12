@@ -47,7 +47,7 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
           <li><Link to={isLogin ? "/Conta": "/Login"} className={`${divIconClass} w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">person</i>Minha conta</Link></li>
           <li><Link to="/Carrinho" className={`${divIconClass} w-full flex gap-3 justify-start relative`}>{ isInCarrinho > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isInCarrinho}</p></span>)}<i className="text-2xl material-symbols-outlined ">shopping_cart</i>Carrinho</Link></li>
           <li><Link to="/Favoritos" className={`${divIconClass} relative w-full flex gap-3 justify-start`}>{isFavorited > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isFavorited}</p></span>)}<i className="text-2xl material-symbols-outlined ">favorite</i>Favoritos</Link></li>
-          {isLogin && <button onClick={()=> setIsLogin(false)} className={`${divIconClass} relative w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">logout</i>Sair</button>}
+          {isLogin && <Link to="/PaginaPrincipal" onClick={()=> setIsLogin(false)} className={`${divIconClass} relative w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">logout</i>Sair</Link>}
         </ul>
       </nav>
     )}
