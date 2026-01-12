@@ -14,7 +14,7 @@ function FormLogin({setIsLogin,email,setEmail,senha,setSenha}:{setIsLogin: React
 
 
 
-function cadastrar(){
+function login(){
 fetch(`${import.meta.env.VITE_API_URL}/user/login`,{
   method: "POST",
   headers: {
@@ -89,7 +89,7 @@ fetch(`${import.meta.env.VITE_API_URL}/user/login`,{
               </a>
             </div>
             <button
-              onClick={cadastrar}
+              onClick={login}
               className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal hover:bg-amber-800 transition-colors"
             >
               Entrar
@@ -158,7 +158,7 @@ function FormCadastro( {isLogin,setIsLogin}: {isLogin:boolean,setIsLogin:React.D
 
       
     
-     fetch("http://localhost:3000/user/cadastro",{
+     fetch(`${import.meta.env.VITE_API_URL}/user/cadastro`,{
       method: "POST",
       headers:{
         "Content-Type": "application/json"

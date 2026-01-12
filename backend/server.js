@@ -13,7 +13,9 @@ const supabase = createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERV
 const app = express()
 app.use("/webhook",express.raw({type: "application/json"}))
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+}));
 
 
 
