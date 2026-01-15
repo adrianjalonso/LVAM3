@@ -12,10 +12,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 const supabase = createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY)
 const app = express()
 app.use("/webhook",express.raw({type: "application/json"}))
-app.use(express.json())
 app.use(cors({
   origin: process.env.FRONTEND_URL,
 }));
+app.use(express.json())
 
 
 
@@ -66,37 +66,41 @@ app.post("/webhook", (req,res)=>{
 
 app.post("/user/cadastro", async (req,res)=>{
   const {name,email,senha} = req.body
-   if(!email||!senha||!name){
+    const emailNormalizado = email.trim().toLowerCase();
+
+   if(!emailNormalizado||!senha||!name){
     return res.status(400).json({
       error: "Dados obrigatorios"
     })
    }
    const senhaHash = await bcrypt.hash(senha,10)
-   const {error} = await supabase.from("usuarios").insert([{name,email,senha_hash: senhaHash}])
+   const {error} = await supabase.from("usuarios").insert([{name,email: emailNormalizado,senha_hash: senhaHash}])
    if (error){
     return res.status(500).json({error: "Erro ao cadastrar"});
    }
-   console.log("Email Recebido!", email)
+   console.log("Email Recebido!", emailNormalizado)
    res.status(200).json({
     message: "Success!"
    })
 })
 
 app.post("/user/login", async(req,res)=> {
+  console.log("LOGIN HIT", req.body)
   const {email,senha} = req.body
-  if(!email||!senha){
+  const emailNormalizado = email.trim().toLowerCase();
+  if(!emailNormalizado||!senha){
     return res.status(400).json({
       error: "Dados obrigatorios"
     })
   }
-  const {data,error} = await supabase.from("usuarios").select().eq("email",email).single()
+  const {data,error} = await supabase.from("usuarios").select().eq("email",emailNormalizado).single()
   if(error||!data){ return res.status(400).json({
     error:  "Email ou senha errados!"
   })}
 
   const senhaCorreta =  await bcrypt.compare(senha,data.senha_hash) 
   if (!senhaCorreta){
-    return res.status(400).json({
+    return res.status(401).json({
       error: "Email ou senha errados!"
     })
   }
