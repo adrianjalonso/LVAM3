@@ -15,12 +15,16 @@ function FormLogin({
   setEmail,
   senha,
   setSenha,
+  userID,
+  setUserID
 }: {
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   senha: string;
   setSenha: React.Dispatch<React.SetStateAction<string>>;
+  userID: number,
+  setUserID: React.Dispatch<React.SetStateAction<number>>
 }) {
   const navigate = useNavigate();
   const [visibilidad, setVisibilidad] = useState(false);
@@ -47,7 +51,10 @@ function FormLogin({
       })
       .then((data) => {
         console.log("Respuesta ", data);
+        localStorage.setItem("userID",data.userID.toString())
+        localStorage.setItem("isLogin", "true")
         navigate("/PaginaPrincipal");
+        setUserID(data.userID)
         setIsLogin(true);
       })
       .catch((err) => {
@@ -302,6 +309,8 @@ function Login({
   setEmail,
   senha,
   setSenha,
+  userID,
+  setUserID
 }: {
   isLogin: boolean;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -309,6 +318,8 @@ function Login({
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   senha: string;
   setSenha: React.Dispatch<React.SetStateAction<string>>;
+  userID: number,
+  setUserID: React.Dispatch<React.SetStateAction<number>>
 }) {
   const location = useLocation();
   const mensagemAlert = location.state?.message;
@@ -362,6 +373,8 @@ function Login({
               email={email}
               setEmail={setEmail}
               setIsLogin={setIsLogin}
+              userID={userID}
+              setUserID={setUserID}
             />
           ) : (
             <FormCadastro

@@ -125,7 +125,7 @@ export default function PaginaPrincipal({
       <div className="flex flex-col items-start justify-center h-screen pt-4 pb-6  w-screen">
         <main className="flex-1 flex flex-col  w-full items-start pt-16 overflow-y-scroll bg-light">
           <div className="flex justify-center items-center w-full px-4">
-            <h1 className="font-bold text-xl sm:text-2xl text-center">Os perfumes que você ama, os preços que você procura</h1>
+            <h1 className="font-bold text-xl sm:text-2xl text-center">Os produtos que você ama, os preços que você procura</h1>
           </div>
           <div className="flex ">
             <aside className="bg-light pb-4  w-52 h-full overflow-y-auto border-dashed border-red-400 justify-center items-start p-5 rounded-lg lg:flex md:flex hidden">

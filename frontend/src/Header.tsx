@@ -1,8 +1,9 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Perfume } from "./types/ComponetsInterface";
 
-export default function Header ({className, onSearchChange, isFavorited, isInCarrinho, disable, isLogin,setIsLogin,menu, setMenu}: {className: string,isFavorited: number,isInCarrinho: number, disable?: boolean, onSearchChange?: (value: string) => void, isLogin: boolean,setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,menu: boolean,setMenu: React.Dispatch<React.SetStateAction<boolean>>}){
+export default function Header ({className, onSearchChange, isFavorited, isInCarrinho, disable, isLogin,setIsLogin,menu, setMenu, setUserID, setCarrinho}: {className: string,isFavorited: number,isInCarrinho: number, disable?: boolean, onSearchChange?: (value: string) => void, isLogin: boolean,setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,menu: boolean,setMenu: React.Dispatch<React.SetStateAction<boolean>>,setUserID: React.Dispatch<React.SetStateAction<number>>,setCarrinho: React.Dispatch<React.SetStateAction<Perfume[]>>}){
 
   
 
@@ -12,6 +13,16 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
   const divIconClass = "items-center  p-1 bg-light h-10  rounded-md hover:bg-primary/20 cursor-pointer transition-colors duration-300"
 
   const desactivar = disable ? "hidden" : ""
+  
+  function logout() {
+  localStorage.removeItem("isLogin");
+  localStorage.removeItem("userID");
+  localStorage.removeItem("carrinho");
+  setIsLogin(false);
+  setUserID(0);
+  setCarrinho([])
+}
+
 
   return(
   <header className={className}>
@@ -29,7 +40,7 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
   </div>
   <div className="flex flex-col">
     <div className={`${desactivar} flex gap-3 relative`}>
-      <Link to="/login" className={`${divIconClass} sm:flex hidden w-10 justify-center `}><i className="text-2xl material-symbols-outlined ">person</i></Link>
+      <Link to={isLogin ? "/Conta": "/Login"} className={`${divIconClass} sm:flex hidden w-10 justify-center `}><i className="text-2xl material-symbols-outlined ">person</i></Link>
       <button onClick={()=>setMenu(!menu)} className={`${divIconClass} sm:hidden flex w-10 justify-center`}><i className="text-2xl material-symbols-outlined ">menu</i></button>
       <Link to="/Carrinho" className={` ${desactivar} sm:flex hidden w-10 justify-center ${divIconClass} relative`}>
          { isInCarrinho > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isInCarrinho}</p></span>)}
@@ -38,7 +49,7 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
       <Link to="/Favoritos" className={`${divIconClass} sm:flex hidden w-10 justify-center  ${desactivar} relative`}>
         {isFavorited > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isFavorited}</p></span>)}
         <i className="text-2xl material-symbols-outlined">favorite</i></Link>
-        {isLogin && <button onClick={()=> setIsLogin(false)} className={`${divIconClass} sm:flex hidden w-10 justify-center  ${desactivar} relative`}><i className="text-2xl material-symbols-outlined ">logout</i></button>}
+        {isLogin && <Link to="/PaginaPrincipal" onClick={logout} className={`${divIconClass} sm:flex hidden w-10 justify-center  ${desactivar} relative`}><i className="text-2xl material-symbols-outlined ">logout</i></Link>}
     </div>
     {menu && (
       <nav onClick={()=>setMenu(!menu)} className="absolute top-full left-0 bg-white w-full shadow-md">
@@ -47,7 +58,7 @@ export default function Header ({className, onSearchChange, isFavorited, isInCar
           <li><Link to={isLogin ? "/Conta": "/Login"} className={`${divIconClass} w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">person</i>Minha conta</Link></li>
           <li><Link to="/Carrinho" className={`${divIconClass} w-full flex gap-3 justify-start relative`}>{ isInCarrinho > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isInCarrinho}</p></span>)}<i className="text-2xl material-symbols-outlined ">shopping_cart</i>Carrinho</Link></li>
           <li><Link to="/Favoritos" className={`${divIconClass} relative w-full flex gap-3 justify-start`}>{isFavorited > 0 && (<span className={`flex justify-center items-center absolute text-white text-center text-xs font-semibold rounded-full top-1 left-6 bg-primary size-[14px] `}><p>{isFavorited}</p></span>)}<i className="text-2xl material-symbols-outlined ">favorite</i>Favoritos</Link></li>
-          {isLogin && <Link to="/PaginaPrincipal" onClick={()=> setIsLogin(false)} className={`${divIconClass} relative w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">logout</i>Sair</Link>}
+          {isLogin && <Link to="/PaginaPrincipal" onClick={logout} className={`${divIconClass} relative w-full flex gap-3 justify-start`}><i className="text-2xl material-symbols-outlined ">logout</i>Sair</Link>}
         </ul>
       </nav>
     )}

@@ -59,3 +59,9 @@ export interface Perfume {
   estoque: number;
   presentacao: string;
 }
+
+export interface Usuario {
+  id: number,
+  name: string,
+  email: string,
+}

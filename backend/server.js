@@ -85,7 +85,6 @@ app.post("/user/cadastro", async (req,res)=>{
 })
 
 app.post("/user/login", async(req,res)=> {
-  console.log("LOGIN HIT", req.body)
   const {email,senha} = req.body
   const emailNormalizado = email.trim().toLowerCase();
   if(!emailNormalizado||!senha){
@@ -95,7 +94,8 @@ app.post("/user/login", async(req,res)=> {
   }
   const {data,error} = await supabase.from("usuarios").select().eq("email",emailNormalizado).single()
   if(error||!data){ return res.status(400).json({
-    error:  "Email ou senha errados!"
+    
+    error:  "Email ou senha errados!",
   })}
 
   const senhaCorreta =  await bcrypt.compare(senha,data.senha_hash) 
@@ -104,10 +104,17 @@ app.post("/user/login", async(req,res)=> {
       error: "Email ou senha errados!"
     })
   }
+  console.log(data.id)
   res.status(200).json({
-    message: "Login realizado com sucesso"
+    message: "Login realizado com sucesso",
+    userID: data.id
   })
   
+})
+
+app.get("/ping",(req,res)=>{
+  console.log("ping")
+  res.send("pong")
 })
 
 app.listen(3000, () => {

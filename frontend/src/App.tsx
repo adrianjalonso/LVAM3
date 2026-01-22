@@ -9,6 +9,7 @@ import { useState } from "react"
 import Sucesso from "./Sucesso"
 import { Perfume } from "./types/ComponetsInterface"
 import Conta from "./conta"
+import Pedidos from "./Pedidos"
 
 export default function App () {
 
@@ -23,19 +24,17 @@ export default function App () {
   const [menu,setMenu] = useState(false)
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
+  const [userID,setUserID] = useState(0)
 
   useEffect(() => {
-  const carrinhoStorage = localStorage.getItem("carrinho");
+  if (!isLogin) return;
 
+  const carrinhoStorage = localStorage.getItem("carrinho");
   if (carrinhoStorage) {
-    try {
-      const carrinhoParseado: Perfume[] = JSON.parse(carrinhoStorage);
-      setCarrinho(carrinhoParseado);
-    } catch (e) {
-      console.error("Erro ao ler carrinho do localStorage", e);
-    }
+    setCarrinho(JSON.parse(carrinhoStorage));
   }
-}, []);
+}, [isLogin]);
+
 
  useEffect(() => {
   const favoritoStorage = localStorage.getItem("favoritos");
@@ -50,6 +49,16 @@ export default function App () {
   }
 }, []);  
 
+  useEffect(()=>{
+    const isLoginStorage = localStorage.getItem("isLogin");
+    const userIDStorage = localStorage.getItem("userID");
+
+    if (isLoginStorage === "true" && userIDStorage) {
+      setIsLogin(true)
+      setUserID(Number(userIDStorage))
+    }
+  })
+
   return (
     <div className="h-full w-full flex justify-center flex-col ">
       <Header isFavorited={favoritos.length} 
@@ -59,18 +68,21 @@ export default function App () {
       setIsLogin={setIsLogin}
       menu={menu}
       setMenu={setMenu}
+      setUserID={setUserID}
+      setCarrinho={setCarrinho}
       className={
           "fixed top-0 left-0 w-full h-14 min-h-14 bg-white border-b flex gap-1 items-center px-4 md:px-10 z-10"
         } />
     <Routes>
       <Route path="/" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos}
       carrinho={carrinho} setCarrinho={setCarrinho} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
-      <Route path="/Login" element={<Login senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} isLogin={isLogin} setIsLogin={setIsLogin} />} />
+      <Route path="/Login" element={<Login userID={userID} setUserID={setUserID} senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} isLogin={isLogin} setIsLogin={setIsLogin} />} />
       <Route path="/PaginaPrincipal" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
       <Route path="/Favoritos" element={<Favoritos  favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} />} />
       <Route path="/Carrinho" element={<Carrinho isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
-      <Route path="/Conta" element={<Conta />}/>
+      <Route path="/Conta" element={<Conta  userID={userID} />}/>
       <Route path="/Sucesso" element={<Sucesso />} />
+      <Route path="/Pedidos" element={<Pedidos />} />
     </Routes>
     </div>
   )

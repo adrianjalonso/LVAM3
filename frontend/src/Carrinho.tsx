@@ -35,7 +35,8 @@ export default function Carrinho({
   const [valor, setValor] = useState(0);
   const [contador, setContador] = useState<Record<number,number>>({});
 
-  const login = true;
+  const textoPredeterminado = isLogin ? "Não existem produtos no carrinho ainda." : "Você deve fazer login."
+
 
   const centralizar =
     products.length === 0
@@ -170,7 +171,7 @@ export default function Carrinho({
         >
           {products.length === 0 ? (
             <p className="w-full flex justify-center h-screen items-center">
-              Não existem produtos no carrinho ainda.
+              {textoPredeterminado}
             </p>
           ) : (
             products.map((perfume) => {
@@ -242,17 +243,9 @@ export default function Carrinho({
             className="w-40 shadow-md mt-2 text-sm font-bold text-white bg-primary rounded-lg py-2.5 hover:bg-primary/90 transition-colors"
             onClick={botaoPagar}
           >{`Pagar R$${valor.toFixed(2)}`}</button>
-          {login ? (
+          {isLogin && (
             <Modal isOpen={open} onClose={() => setOpen(false)}>
               <CheckoutPage stripePromise={stripePromise} valor={valor} />
-            </Modal>
-          ) : (
-            <Modal isOpen={open} onClose={() => setOpen(false)}>
-              <div>
-                <h1>Aqui adiciona los datos</h1>
-                <p>nombre,direction,email</p>
-                <button>Cadastrar</button>
-              </div>
             </Modal>
           )}
         </div>
