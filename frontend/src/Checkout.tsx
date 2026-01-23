@@ -12,10 +12,11 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface CheckoutPageProps {
   stripePromise: Promise<Stripe | null>;
-  valor: number;
+  valor: number,
+  userID: number
 }
 
-function CheckoutForm({ valor }) {
+function CheckoutForm({ valor,userID }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,10 @@ function CheckoutForm({ valor }) {
     const res = await fetch("http://localhost:3000/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: Math.round(valor * 100) }),
+      body: JSON.stringify({ 
+        amount: Math.round(valor * 100),
+        userId: userID
+       }),
     });
 
     const { clientSecret } = await res.json();
@@ -73,6 +77,7 @@ function CheckoutForm({ valor }) {
 export default function CheckoutPage({
   stripePromise,
   valor,
+  userID
 }: CheckoutPageProps) {
   return (
     <Elements
@@ -85,7 +90,7 @@ export default function CheckoutPage({
         locale: "pt",
       }}
     >
-      <CheckoutForm valor={valor} />
+      <CheckoutForm userID={userID} valor={valor} />
     </Elements>
   );
 }

@@ -51,6 +51,7 @@ import { Link } from "react-router-dom"
       <div className=" p-4 w-5/6">
         <h2 className="text-2xl">{user?.name}</h2>
         <p className="text-xs">{user?.email}</p>
+        <p className="text-xs">{user?.id}</p>
         <div className="flex justify-center">
           <button className="w-5/6 mt-2 text-sm  font-bold text-white bg-primary rounded-lg py-2 hover:bg-primary/90 transition-colors">Editar perfil</button>
           </div>

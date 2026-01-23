@@ -9,7 +9,7 @@ import { useState } from "react"
 import Sucesso from "./Sucesso"
 import { Perfume } from "./types/ComponetsInterface"
 import Conta from "./conta"
-import Pedidos from "./Pedidos"
+import Pedidos from "./PedidosDoUsuario"
 
 export default function App () {
 
@@ -57,7 +57,7 @@ export default function App () {
       setIsLogin(true)
       setUserID(Number(userIDStorage))
     }
-  })
+  },[])
 
   return (
     <div className="h-full w-full flex justify-center flex-col ">
@@ -77,9 +77,9 @@ export default function App () {
       <Route path="/" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos}
       carrinho={carrinho} setCarrinho={setCarrinho} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
       <Route path="/Login" element={<Login userID={userID} setUserID={setUserID} senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} isLogin={isLogin} setIsLogin={setIsLogin} />} />
-      <Route path="/PaginaPrincipal" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
+      <Route path="/PaginaPrincipal" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho}  setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
       <Route path="/Favoritos" element={<Favoritos  favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} />} />
-      <Route path="/Carrinho" element={<Carrinho isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
+      <Route path="/Carrinho" element={<Carrinho userID={userID} isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
       <Route path="/Conta" element={<Conta  userID={userID} />}/>
       <Route path="/Sucesso" element={<Sucesso />} />
       <Route path="/Pedidos" element={<Pedidos />} />

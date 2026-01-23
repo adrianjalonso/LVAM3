@@ -16,6 +16,7 @@
  export interface Carrinho {
   isLogin: boolean;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  userID: number;
   carrinho: Perfume[]
   setCarrinho: React.Dispatch<React.SetStateAction<Perfume[]>>;
   favoritos: Perfume[];
@@ -64,4 +65,11 @@ export interface Usuario {
   id: number,
   name: string,
   email: string,
+}
+export interface Pedidos {
+  id_pedido: number,
+  id_produto: number,
+  quantidades_do_produto: number,
+  status: string,
+  preco_total: number
 }

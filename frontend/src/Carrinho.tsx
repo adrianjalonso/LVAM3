@@ -6,6 +6,7 @@ import CheckoutPage from "./Checkout";
 import { Modal } from "./Modal";
 import { loadStripe } from "@stripe/stripe-js";
 import { Stripe } from "@stripe/stripe-js";
+import { json } from "stream/consumers";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -17,6 +18,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 export default function Carrinho({
   isLogin,
   setIsLogin,
+  userID,
   favoritos,
   setFavoritos,
   carrinho,
@@ -130,22 +132,40 @@ export default function Carrinho({
   });
   }
 
-  function botaoPagar() {
-    setOpen(true);
-  }
   function somar(id:number){
     setContador((prev)=>({
       ...prev,
       [id]:Math.min(5,(prev[id]||1)+1)
     }));
   }
+
   function restar(id:number){
     setContador((prev)=>({
       ...prev,
       [id]:Math.max(1,(prev[id]||1)-1)
     }));
   }
+
   
+  async function botaoPagar() {
+    const itensDoPedido = (products||[]).map((produto) => ({
+    produto_id: produto.id,
+    quantidade: contador[produto.id] || 1,
+    preco: produto.price,
+  }));
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/create-payment-intent`,{
+      method:  "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        amount: Math.round(valor*100),
+        userId: userID,
+        itens: itensDoPedido
+      })
+    })
+    setOpen(true);
+  }
 
   return (
     <div className="flex flex-col  justify-between gap-4  w-full  lg:w-full pt-20 pb-4 ">
@@ -244,8 +264,8 @@ export default function Carrinho({
             onClick={botaoPagar}
           >{`Pagar R$${valor.toFixed(2)}`}</button>
           {isLogin && (
-            <Modal isOpen={open} onClose={() => setOpen(false)}>
-              <CheckoutPage stripePromise={stripePromise} valor={valor} />
+            <Modal  isOpen={open} onClose={() => setOpen(false)}>
+              <CheckoutPage userID={userID} stripePromise={stripePromise} valor={valor} />
             </Modal>
           )}
         </div>

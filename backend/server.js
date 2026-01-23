@@ -21,11 +21,41 @@ app.use(express.json())
 
 
 app.post("/create-payment-intent", async (req, res) => {
+   const {amount, userId, itens} = req.body
+   console.log("Este es el ide del ususario:", userId)
   try {
-    const {amount} = req.body
-
     if(!amount|| amount < 1){
       res.status(400).json({error: "Monto invalido!"})
+    }
+
+    const {data: pedido, error: pedidoError} = await supabase.from("pedidos").insert([{
+      user_id: userId,
+      status: "pendente",
+      total_pedido: amount / 100
+    }])
+    .select().single()
+
+    if(pedidoError){
+      console.log("Erro ao criar pedido:", pedidoError)
+      return res.status(500).json({error: "Erro ao criar pedido"})
+    }
+
+    if (!itens || !Array.isArray(itens) || itens.length === 0) {
+  return res.status(400).json({ error: "Itens do pedido inválidos" });
+}
+
+    const itensDoPedidoInsert = itens.map((item)=>({
+      pedido_id: pedido.id,
+      perfume_id: item.produto_id,
+      quantidade: item.quantidade,
+      preco: item.preco
+    }))
+  
+    const {error: itensError} = await supabase.from("itens_pedidos").insert(itensDoPedidoInsert)
+
+    if (itensError){
+      console.log("Erro ao salvar itens do pedido", itensError);
+      return res.status(500).json({error:  "Erro ao salvar itens do pedido"})
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
