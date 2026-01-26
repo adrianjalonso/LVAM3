@@ -24,14 +24,12 @@ function CheckoutForm({ valor,userID }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    const {error:submitEror} = await elements.submit();
-    if (submitEror) {
-      console.log(submitEror.message)
-      setLoading(false)
-      return
-    }
     
+    if (!stripe || !elements) {
+  setLoading(false);
+  return;
+}
+
 
     const res = await fetch("http://localhost:3000/create-payment-intent", {
       method: "POST",

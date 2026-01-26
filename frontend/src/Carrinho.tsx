@@ -153,7 +153,7 @@ export default function Carrinho({
     quantidade: contador[produto.id] || 1,
     preco: produto.price,
   }));
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/create-payment-intent`,{
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/pedidos/create`,{
       method:  "POST",
       headers: {
         "Content-Type": "application/json"
