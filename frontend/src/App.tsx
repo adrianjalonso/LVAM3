@@ -25,6 +25,7 @@ export default function App () {
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
   const [userID,setUserID] = useState(0)
+  const [pedidoId,setPedidoId] = useState(0)
 
   useEffect(() => {
   if (!isLogin) return;
@@ -79,10 +80,10 @@ export default function App () {
       <Route path="/Login" element={<Login userID={userID} setUserID={setUserID} senha={senha} setSenha={setSenha} email={email} setEmail={setEmail} isLogin={isLogin} setIsLogin={setIsLogin} />} />
       <Route path="/PaginaPrincipal" element={<PaginaPrincipal menu={menu} setMenu={setMenu} isLogin={isLogin} setIsLogin={setIsLogin} busca={busca} setBusca={setBusca} favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho}  setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids}/>} />
       <Route path="/Favoritos" element={<Favoritos  favoritos={favoritos} setFavoritos={setFavoritos} carrinho={carrinho} setCarrinho={setCarrinho} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} />} />
-      <Route path="/Carrinho" element={<Carrinho userID={userID} isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
+      <Route path="/Carrinho" element={<Carrinho pedidoId={pedidoId} setPedidoId={setPedidoId} userID={userID} isLogin={isLogin} setIsLogin={setIsLogin} favoritos={favoritos} setFavoritos={setFavoritos} totalMasculino={totalMasculino} setTotalMasculino={setTotalMasculino} total={total} setTotal={setTotal} totalFeminino={totalFeminino} setTotalFeminino={setTotalFeminino} totalKids={totalKids} setTotalKids={setTotalKids} carrinho={carrinho} setCarrinho={setCarrinho}/>} />
       <Route path="/Conta" element={<Conta  userID={userID} />}/>
       <Route path="/Sucesso" element={<Sucesso />} />
-      <Route path="/Pedidos" element={<Pedidos />} />
+      <Route path="/Pedidos" element={userID > 0 ? <Pedidos userID={userID} /> : <p>Carregando</p> } />
     </Routes>
     </div>
   )

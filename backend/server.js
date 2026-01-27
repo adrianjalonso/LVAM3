@@ -12,12 +12,49 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY,
 );
 const app = express();
-app.use("/webhook", express.raw({ type: "application/json" }));
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
   }),
 );
+
+app.post("/webhook", express.raw({type: "application/json"}), async (req, res) => {
+  console.log("🚀 ¡PETICIÓN RECIBIDA EN EL WEBHOOK!")
+  const sig = req.headers["stripe-signature"];
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
+  } catch (err) {
+    return res.status(400).send("webhook error");
+  }
+  if (event.type === "payment_intent.succeeded") {
+    console.log("Pagamento confirmado!");
+    const paymentIntent = event.data.object;
+    const pedidoId = paymentIntent.metadata?.pedido_id;
+    if (pedidoId) {
+      const { data, error } = await supabase
+        .from("pedidos")
+        .update({ status: "aprovado" })
+        .eq("id", parseInt(pedidoId));
+      
+
+      if (error) {
+        console.log("Erro ao atualizar status do pedido:", error);
+      } else {
+        console.log("Pedido atualizado com sucesso:", data);
+      }
+    }
+  }
+
+  res.json({ received: true });
+});
+
+
 app.use(express.json());
 
 app.post("/pedidos/create", async(req, res)=>{
@@ -32,8 +69,6 @@ app.post("/pedidos/create", async(req, res)=>{
     }
 
   try{
-   
-
     const { data: pedido, error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
@@ -60,12 +95,12 @@ app.post("/pedidos/create", async(req, res)=>{
       .insert(itensDoPedidoInsert);
 
     if (itensError) throw itensError
+
     return res.json({pedidoID: pedido.id})
   } catch (error) {
     console.log("Erro Supabase:", error);
     res.status(500).json({ error: error.message });
   }
-  res.json({pedidoId: pedido.id})
 })
 
 app.post("/create-payment-intent", async (req, res) => {
@@ -79,7 +114,7 @@ app.post("/create-payment-intent", async (req, res) => {
 
     const { data: pedido, error } = await supabase
       .from("pedidos")
-      .select("total_pedido")
+      .select("id, total_pedido")
       .eq("id", pedidoId)
       .single();
 
@@ -102,42 +137,7 @@ app.post("/create-payment-intent", async (req, res) => {
   }
 });
 
-app.post("/webhook", async (req, res) => {
-  const sig = req.headers["stripe-signature"];
 
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET,
-    );
-  } catch (err) {
-    return res.status(400).send("webhook error");
-  }
-
-  if (event.type === "payment_intent.succeeded") {
-    console.log("Pagamento confirmado!");
-    const paymentIntent = event.data.object;
-    const pedidoId = paymentIntent.metadata?.pedido_id;
-    if (pedidoId) {
-      const { data, error } = await supabase
-        .from("pedidos")
-        .update({ status: "Aprovado" })
-        .eq("id", pedidoId);
-
-      
-
-      if (error) {
-        console.log("Erro ao atualizar status do pedido:", error);
-      } else {
-        console.log("Pedido atualizado com sucesso:", data);
-      }
-    }
-  }
-
-  res.json({ received: true });
-});
 
 app.post("/user/cadastro", async (req, res) => {
   const { name, email, senha } = req.body;

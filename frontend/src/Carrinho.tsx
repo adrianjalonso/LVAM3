@@ -31,6 +31,8 @@ export default function Carrinho({
   setTotalFeminino,
   totalKids,
   setTotalKids,
+  pedidoId,
+  setPedidoId,
 }: Carrinho) {
   const [products, setProducts] = useState<Perfume[]>([]);
   const [open, setOpen] = useState(false);
@@ -164,6 +166,12 @@ export default function Carrinho({
         itens: itensDoPedido
       })
     })
+
+    const data = await response.json()
+
+    setPedidoId(data.pedidoID)
+    localStorage.setItem("pedidoID", data.pedidoID)
+
     setOpen(true);
   }
 
@@ -265,7 +273,7 @@ export default function Carrinho({
           >{`Pagar R$${valor.toFixed(2)}`}</button>
           {isLogin && (
             <Modal  isOpen={open} onClose={() => setOpen(false)}>
-              <CheckoutPage userID={userID} stripePromise={stripePromise} valor={valor} />
+              <CheckoutPage setOpen={setOpen} setCarrinho={setCarrinho} pedidoId={pedidoId} userID={userID} stripePromise={stripePromise} valor={valor} />
             </Modal>
           )}
         </div>

@@ -28,7 +28,9 @@
   totalFeminino: number,
   setTotalFeminino: React.Dispatch<React.SetStateAction<number>>
   totalKids: number,
-  setTotalKids: React.Dispatch<React.SetStateAction<number>>
+  setTotalKids: React.Dispatch<React.SetStateAction<number>>,
+  pedidoId: number,
+  setPedidoId: React.Dispatch<React.SetStateAction<number>>
 }
 
  export interface Pages {
@@ -52,6 +54,8 @@
   setTotalKids: React.Dispatch<React.SetStateAction<number>>
 }
 
+ 
+
 export interface Perfume {
   id: number;
   name_perfume: string;
@@ -67,9 +71,18 @@ export interface Usuario {
   email: string,
 }
 export interface Pedidos {
-  id_pedido: number,
-  id_produto: number,
-  quantidades_do_produto: number,
+  id: number,
+  user_id: number
   status: string,
-  preco_total: number
+  total_pedido: number,
+  itens_pedidos: ItensPedidos[],
+}
+export interface ItensPedidos {
+  id: number,
+  perfume_id: number,
+  pedido_id: number
+  quantidade: string,
+  preco: number,
+  created_at: string,
+  perfumes?: Perfume
 }

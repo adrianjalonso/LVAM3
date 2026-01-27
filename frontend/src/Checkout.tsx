@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -6,17 +6,22 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { Stripe, StripeConstructorOptions } from "@stripe/stripe-js";
+import { Stripe } from "@stripe/stripe-js";
+import * as React from "react";
+import { Perfume } from "./types/ComponetsInterface";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-interface CheckoutPageProps {
+export interface CheckoutPageProps {
   stripePromise: Promise<Stripe | null>;
   valor: number,
-  userID: number
+  userID: number,
+  pedidoId: number,
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setCarrinho:React.Dispatch<React.SetStateAction<Perfume[]>>
 }
 
-function CheckoutForm({ valor,userID }) {
+function CheckoutForm({ valor,userID, pedidoId, setCarrinho,setOpen }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -31,28 +36,26 @@ function CheckoutForm({ valor,userID }) {
 }
 
 
-    const res = await fetch("http://localhost:3000/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        amount: Math.round(valor * 100),
-        userId: userID
-       }),
-    });
-
-    const { clientSecret } = await res.json();
-
     const result = await stripe.confirmPayment({
       elements,
-      clientSecret,
       confirmParams: {
         return_url: "http://localhost:5173/sucesso",
       },
+      redirect: "if_required"
     });
 
     if (result.error) {
       console.log(result.error.message);
+      setLoading(false)
+      return
+    } else if(result.paymentIntent?.status === "succeeded"){
+      setLoading(false)
+      setOpen(false)
+      window.location.href = "/sucesso";
+      setCarrinho([]);
+  localStorage.removeItem("carrinho");
     }
+    
 
     setLoading(false);
   };
@@ -75,20 +78,38 @@ function CheckoutForm({ valor,userID }) {
 export default function CheckoutPage({
   stripePromise,
   valor,
-  userID
+  userID,
+  pedidoId,
+  setOpen,
+  setCarrinho
 }: CheckoutPageProps) {
+
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pedidoId }),
+    })
+      .then(res => res.json())
+      .then(data => setClientSecret(data.clientSecret))
+      .catch(err => console.log(err));
+  }, [pedidoId]);
+
+  if (!clientSecret) return <div>Carregando pagamento...</div>;
+
   return (
-    <Elements
+     
+      <Elements
       stripe={stripePromise}
       options={{ 
-        mode: "payment",
-        currency: "brl",
-        amount: Math.round(valor * 100),
+        clientSecret,
         appearance: { theme: "stripe" },
         locale: "pt",
       }}
     >
-      <CheckoutForm userID={userID} valor={valor} />
+      <CheckoutForm setOpen={setOpen} setCarrinho={setCarrinho} pedidoId={pedidoId} userID={userID} valor={valor} />
     </Elements>
   );
 }
