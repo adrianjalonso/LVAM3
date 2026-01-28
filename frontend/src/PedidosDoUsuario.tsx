@@ -26,20 +26,28 @@ export default function PedidosDoUsuario ({userID}: {userID:number}){
 
 
   return(
-    <div className="flex flex-col pt-28 items-center w-screen h-screen ">
+    <div className="flex flex-col pt-20 items-center w-screen h-screen ">
       {pedidos.map((pedido)=>(
        
-        <div className="size-32 bg-red-600 flex m-3" key={pedido.id}>
-          <p>${pedido.total_pedido}</p>
-          {pedido.itens_pedidos?.map((item)=>{
-            return(
-              <div key={item.id}>
-                <p>{item.quantidade}</p>
-                <p>{item.perfumes?.name_perfume}</p>
-                <p>{pedido.total_pedido}</p>
-              </div>
-            )
-          })}
+        <div className=" bg-white flex m-3 rounded-lg shadow-md w-11/12 " key={pedido.id}>
+          <div className="">
+            <div>
+              {pedido.itens_pedidos?.map((item)=>{
+                return(
+                  <div className="flex p-2 gap-3  ">
+                    <div>
+                      <img className="h-24" src={`./public/imagens/${item.perfumes.name_perfume}.png`} alt="" />
+                    </div>
+                    <div key={item.id}>
+                      <p className="text-xl">{item.perfumes?.name_perfume}</p>
+                      <p>{`R$ ${pedido.total_pedido}`}</p>
+                      <p>{pedido.status}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </div>
        
       ))}
